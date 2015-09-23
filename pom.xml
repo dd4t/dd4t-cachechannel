@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.dd4t</groupId>
+    <artifactId>dd4t-cache</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>dd4t-cache</name>
+    <description>DD4T CacheChannelConnector implementation for DD4T .NET</description>
+    <url>https://github.com/dd4t</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Quirijn Slings</name>
+            <email>quirijn.slings@trivident.com</email>
+            <organization>DD4T</organization>
+            <organizationUrl>https://github.com/dd4t</organizationUrl>
+        </developer>
+        <developer>
+            <name>Jan Horsman</name>
+            <email>jan@jhorsman.nl</email>
+            <organization>DD4T</organization>
+            <organizationUrl>https://github.com/dd4t</organizationUrl>
+        </developer>
+    </developers>
+
+    <!-- todo: scm -->
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.skipTests>true</project.skipTests>
+
+        <!-- versions -->
+        <commons-io.version>2.4</commons-io.version>
+        <jackson.version>2.4.3</jackson.version>
+        <slf4j.version>1.6.4</slf4j.version>
+        <junit.version>4.11</junit.version>
+        <activemq.version>5.10.0</activemq.version>
+        <tridion.version>7.1.0</tridion.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.tridion.contentdelivery</groupId>
+          <artifactId>cd_cache</artifactId>
+          <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.tridion.contentdelivery</groupId>
+          <artifactId>cd_core</artifactId>
+          <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${activemq.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- for unit tests -->
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${junit.version}</version>
+          <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

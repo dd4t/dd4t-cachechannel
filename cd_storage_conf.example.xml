@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration Version="7.1"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="schemas/cd_storage_conf.xsd">
+    <Global>
+        <ObjectCache Enabled="true">
+            <!-- add Policy and Features elements from standard config -->
+
+            <!-- JMS configuration -->
+            <RemoteSynchronization Queuesize="512">
+                <Connector Class="org.dd4t.cache.TextJMSCacheChannelConnector" Topic="Tridion" Strategy="AsyncJMS11">
+                    <JndiContext>
+                        <Property Name="java.naming.factory.initial" Value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                        <Property Name="java.naming.provider.url" Value="tcp://localhost:61616?soTimeout=5000"/>
+                        <Property Name="topic.Tridion" Value="TridionTopic"/>
+                        <property Name="objectMessageSerializationDefered" Value="true"/>
+                    </JndiContext>
+                </Connector>
+            </RemoteSynchronization>
