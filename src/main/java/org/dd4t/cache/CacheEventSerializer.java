@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tridion.cache.CacheEvent;
 
 public class CacheEventSerializer {
-    private static ObjectMapper objectMapper = null;
-    public static String serialize(CacheEvent cacheEvent) throws JsonProcessingException {
-        if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-        }
-        return objectMapper.writeValueAsString(cacheEvent);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    public static String serialize(final CacheEvent cacheEvent) throws JsonProcessingException {
+        return OBJECT_MAPPER.writeValueAsString(cacheEvent);
     }
 }

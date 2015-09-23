@@ -17,10 +17,11 @@ import java.util.List;
 import java.util.Properties;
 
 public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
-    private static Logger log = LoggerFactory.getLogger(TextJMSCacheChannelConnector.class);
-    public void configure(Configuration configuration)
-            throws ConfigurationException {
-        log.debug("loading TextJMSCacheChannelConnector");
+
+    private static final Logger LOG = LoggerFactory.getLogger(TextJMSCacheChannelConnector.class);
+
+    public void configure(Configuration configuration) throws ConfigurationException {
+        LOG.debug("Loading TextJMSCacheChannelConnector");
         Properties jndiContextProperties = null;
         if (configuration.hasChild("JndiContext"))
         {
@@ -32,15 +33,18 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                 String propertyKey = config.getAttribute("Name");
                 String propertyValue = config.getAttribute("Value");
                 jndiContextProperties.setProperty(propertyKey, propertyValue);
-                log.debug("JMS Connector JNDI Property '" + propertyKey + "' set with value '" + propertyValue + "'");
+                LOG.debug("JMS Connector JNDI Property '" + propertyKey + "' set with value '" + propertyValue + "'");
             }
         }
         String topicName = configuration.getAttribute("Topic", "TridionCacheChannel");
         String topicConnectionFactoryName = configuration.getAttribute("TopicConnectionFactory", "TopicConnectionFactory");
-        log.debug("JMS Connector TopicConnectionFactory name is " + topicConnectionFactoryName + " topic is " + topicName);
+
+        LOG.debug("JMS Connector TopicConnectionFactory name is " + topicConnectionFactoryName + " topic is " + topicName);
 
         String strategy = configuration.getAttribute("Strategy", "AsyncJMS11");
-        log.debug("JMS strategy is " + strategy);
+
+        LOG.debug("JMS strategy is " + strategy);
+
         if (("AsyncJMS11".equals(strategy)) || ("AsyncJMS11MDB".equals(strategy))) {
             this.client = new TextJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS11MDB".equals(strategy));
         } else if ("SyncJMS11".equals(strategy)) {
@@ -79,7 +83,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                 }
                 catch (JMSException e)
                 {
-                    TextJMSCacheChannelConnector.log.warn("setExceptionListener failed. Most likely due to container restrictions. In these environments the MDB com.tridion.cache.JMSBean must be setup instead", e);
+                    TextJMSCacheChannelConnector.LOG.warn("setExceptionListener failed. Most likely due to container restrictions. In these environments the MDB com.tridion.cache.JMSBean must be setup instead", e);
                 }
             }
             this.topicConnection.start();
@@ -92,13 +96,13 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                 }
                 catch (JMSException e)
                 {
-                    TextJMSCacheChannelConnector.log.warn("setMessageListener failed. Most likely due to container restrictions. In these environments the MDB com.tridion.cache.JMSBean must be setup instead", e);
+                    TextJMSCacheChannelConnector.LOG.warn("setMessageListener failed. Most likely due to container restrictions. In these environments the MDB com.tridion.cache.JMSBean must be setup instead", e);
                 }
             }
             this.topicPublisherSession = this.topicConnection.createTopicSession(false, 1);
             this.topicPublisher = this.topicPublisherSession.createPublisher(topic);
             this.publicationTextMessage = this.topicPublisherSession.createTextMessage();
-            log.debug("Connected to queue; " + topic);
+            LOG.debug("Connected to queue; " + topic);
         }
 
         public void broadcastEvent(CacheEvent event)
@@ -107,9 +111,9 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                 String s = CacheEventSerializer.serialize(event);
                 this.publicationTextMessage.setText(s);
                 this.topicPublisher.publish(this.publicationTextMessage);
-                log.debug("Published event: " + s);
+                LOG.debug("Published event: " + s);
             } catch (JsonProcessingException e) {
-                log.error("Cannot serialize cache event into JSON", e);
+                LOG.error("Cannot serialize cache event into JSON", e);
             }
         }
     }
