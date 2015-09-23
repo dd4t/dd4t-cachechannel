@@ -19,6 +19,12 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:git@github.com:/dd4t/dd4t-cachechannel.git</connection>
+        <developerConnection>scm:git:git@github.com:/dd4t/dd4t-cachechannel.git</developerConnection>
+        <url>git@github.com:/dd4t/dd4t-cachechannel.git</url>
+    </scm>
+
     <developers>
         <developer>
             <name>Quirijn Slings</name>
