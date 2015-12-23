@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dd4t</groupId>
-    <artifactId>dd4t-cache</artifactId>
+    <artifactId>dd4t-cachechannel</artifactId>
     <packaging>jar</packaging>
     <version>1.1-SNAPSHOT</version>
 
