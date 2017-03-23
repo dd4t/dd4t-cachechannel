@@ -6,7 +6,7 @@
     <groupId>org.dd4t</groupId>
     <artifactId>dd4t-cachechannel</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <name>dd4t-cache</name>
     <description>DD4T CacheChannelConnector implementation for DD4T .NET</description>
