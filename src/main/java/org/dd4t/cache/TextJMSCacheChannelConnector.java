@@ -1,10 +1,12 @@
 package org.dd4t.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.tridion.cache.CacheChannelEventListener;
 import com.tridion.cache.CacheEvent;
 import com.tridion.cache.JMSCacheChannelConnector;
 import com.tridion.configuration.Configuration;
 import com.tridion.configuration.ConfigurationException;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,10 @@ import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 
@@ -125,5 +131,56 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
         public TextSynchronousJMS11Approach (Properties jndiProperties, String factoryName, String topicName) {
             super(jndiProperties, factoryName, topicName);
         }
+    }
+
+    @Override
+    protected void handleJmsMessage(Message msg) {
+        if (msg instanceof ActiveMQTextMessage) {
+            try {
+                String msgAsString = ((ActiveMQTextMessage) msg).getText();
+                LOG.debug("processing message " + msgAsString);
+
+                CacheEvent cacheEvent;
+                try {
+                    cacheEvent = CacheEventSerializer.deserialize(msgAsString);
+                } catch (IOException e) {
+                    LOG.warn("error reading message", e);
+                    return;
+                }
+
+                try {
+                    Field isClosed = this.getClass().getDeclaredField("isClosed");
+                    isClosed.setAccessible(true);
+                    if (!isClosed.getBoolean(this)) {
+                        Field listenerField = this.getClass().getDeclaredField("listener");
+                        listenerField.setAccessible(true);
+                        CacheChannelEventListener listener = (CacheChannelEventListener) listenerField.get(this);
+                        listener.handleRemoteEvent(cacheEvent);
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (JMSException var3) {
+                LOG.error("JMS Exception occurred during reception of event. Attempting setting up JMS connectivity again", var3);
+                try {
+                    Field isValid = this.getClass().getDeclaredField("isValid");
+                    isValid.setAccessible(true);
+                    isValid.setBoolean(this, false);
+
+                    Method fireDisconnectMethod = this.getClass().getMethod("fireDisconnect");
+                    fireDisconnectMethod.setAccessible(true);
+                    fireDisconnectMethod.invoke(this);
+
+                } catch (IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
+                    LOG.warn("error while trying to handle the previous exception, because of some reflection issue", e);
+                }
+            }
+        } else {
+            super.handleJmsMessage(msg);
+        }
+
     }
 }

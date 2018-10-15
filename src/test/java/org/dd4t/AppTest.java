@@ -28,7 +28,16 @@ public class AppTest
         return new TestSuite( AppTest.class );
     }
 
+    public static DeserializationTest() {
+        String s = "{\"regionPath\":\"/com.tridion.storage.BinaryContent\",\"key\":\"23:2755721:tcm:23-2750225-32\",\"type\":1}";
+        
+    }
+
+
     /**
+     *
+     *
+     *
      * Rigourous Test :-)
      */
     public void testApp()
