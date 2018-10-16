@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -141,36 +140,39 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                 LOG.debug("processing message " + msgAsString);
 
                 CacheEvent cacheEvent;
+                CacheEventSerializer cacheEventSerializer = new CacheEventSerializer();
                 try {
-                    cacheEvent = CacheEventSerializer.deserialize(msgAsString);
+                    cacheEvent = cacheEventSerializer.deserialize(msgAsString);
                 } catch (IOException e) {
                     LOG.warn("error reading message", e);
                     return;
                 }
 
                 try {
-                    Field isClosed = this.getClass().getDeclaredField("isClosed");
+                    Field isClosed = this.getClass().getSuperclass().getDeclaredField("isClosed");
                     isClosed.setAccessible(true);
                     if (!isClosed.getBoolean(this)) {
-                        Field listenerField = this.getClass().getDeclaredField("listener");
+                        Field listenerField = this.getClass().getSuperclass().getDeclaredField("listener");
                         listenerField.setAccessible(true);
                         CacheChannelEventListener listener = (CacheChannelEventListener) listenerField.get(this);
                         listener.handleRemoteEvent(cacheEvent);
                     }
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
+                    LOG.warn("error handling message", e);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+                    LOG.warn("error handling message", e);
                 }
 
             } catch (JMSException var3) {
                 LOG.error("JMS Exception occurred during reception of event. Attempting setting up JMS connectivity again", var3);
                 try {
-                    Field isValid = this.getClass().getDeclaredField("isValid");
+                    Field isValid = this.getClass().getSuperclass().getDeclaredField("isValid");
                     isValid.setAccessible(true);
                     isValid.setBoolean(this, false);
 
-                    Method fireDisconnectMethod = this.getClass().getMethod("fireDisconnect");
+                    Method fireDisconnectMethod = this.getClass().getSuperclass().getMethod("fireDisconnect");
                     fireDisconnectMethod.setAccessible(true);
                     fireDisconnectMethod.invoke(this);
 
@@ -181,6 +183,5 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
         } else {
             super.handleJmsMessage(msg);
         }
-
     }
 }
