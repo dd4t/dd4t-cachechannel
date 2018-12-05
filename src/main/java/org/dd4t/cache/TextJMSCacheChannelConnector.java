@@ -1,6 +1,7 @@
 package org.dd4t.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.tridion.cache.CacheChannelEventListener;
 import com.tridion.cache.CacheEvent;
 import com.tridion.cache.JMSCacheChannelConnector;
 import com.tridion.configuration.Configuration;
@@ -9,10 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,6 +24,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(TextJMSCacheChannelConnector.class);
 
+    @Override
     public void configure(Configuration configuration) throws ConfigurationException {
         LOG.info("Loading TextJMSCacheChannelConnector");
         Properties jndiContextProperties = null;
@@ -69,6 +74,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
             super(jndiProperties, factoryName, topicName, isMDBMode);
         }
 
+        @Override
         public void connect(MessageListener messageListener, ExceptionListener exceptionListener) throws JMSException, NamingException {
             Context jndiContext = this.jndiProperties != null ? new InitialContext(this.jndiProperties) : new InitialContext();
             TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory)jndiContext.lookup(this.topicConnectionFactoryName);
@@ -104,6 +110,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
             LOG.debug("Connected to queue, with topic: {} ", topic);
         }
 
+        @Override
         public void broadcastEvent(CacheEvent event) throws JMSException {
             try {
                 String serialized = CacheEventSerializer.serialize(event);
@@ -124,6 +131,54 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
     public class TextSynchronousJMS11Approach extends  JMSCacheChannelConnector.SynchronousJMS11Approach {
         public TextSynchronousJMS11Approach (Properties jndiProperties, String factoryName, String topicName) {
             super(jndiProperties, factoryName, topicName);
+        }
+    }
+
+    @Override
+    protected void handleJmsMessage(Message msg) {
+        if (msg instanceof TextMessage) {
+            try {
+                String msgAsString = ((TextMessage) msg).getText();
+                LOG.debug("processing message " + msgAsString);
+
+                CacheEvent cacheEvent;
+                try {
+                    cacheEvent = CacheEventSerializer.deserialize(msgAsString);
+                } catch (IOException e) {
+                    LOG.warn("error reading message", e);
+                    return;
+                }
+
+                try {
+                    Field isClosed = this.getClass().getSuperclass().getDeclaredField("isClosed");
+                    isClosed.setAccessible(true);
+                    if (!isClosed.getBoolean(this)) {
+                        Field listenerField = this.getClass().getSuperclass().getDeclaredField("listener");
+                        listenerField.setAccessible(true);
+                        CacheChannelEventListener listener = (CacheChannelEventListener) listenerField.get(this);
+                        listener.handleRemoteEvent(cacheEvent);
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    LOG.warn("error handling message", e);
+                }
+
+            } catch (JMSException jmsException) {
+                LOG.error("JMS Exception occurred during reception of event. Attempting setting up JMS connectivity again", jmsException);
+                try {
+                    Field isValid = this.getClass().getSuperclass().getDeclaredField("isValid");
+                    isValid.setAccessible(true);
+                    isValid.setBoolean(this, false);
+
+                    Method fireDisconnectMethod = this.getClass().getSuperclass().getMethod("fireDisconnect");
+                    fireDisconnectMethod.setAccessible(true);
+                    fireDisconnectMethod.invoke(this);
+
+                } catch (IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
+                    LOG.warn("error while trying to handle the previous exception, because of some reflection issue", e);
+                }
+            }
+        } else {
+            super.handleJmsMessage(msg);
         }
     }
 }
