@@ -44,9 +44,8 @@ public class AppTest extends TestCase {
                 "{\"regionPath\":\"/com.tridion.storage.BinaryContent\",\"key\":\"23:2755721:tcm:23-2750225-32\",\"type\":1}"
         };
 
-        CacheEventSerializer cacheEventSerializer = new CacheEventSerializer();
         for(int i = 0, l = messages.length; i < l; i++) {
-            CacheEvent cacheEvent = cacheEventSerializer.deserialize(messages[i]);
+            CacheEvent cacheEvent = CacheEventSerializer.deserialize(messages[i]);
             assertNotNull(cacheEvent.getKey());
             assertNotNull(cacheEvent);
         }

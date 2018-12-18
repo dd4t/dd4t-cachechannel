@@ -56,7 +56,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <junit.version>4.11</junit.version>
         <activemq.version>5.15.7</activemq.version>
-        <tridion.version>8.1.1-1005</tridion.version>
+        <tridion.version>[8.1.1,8.5)</tridion.version>
     </properties>
 
     <build>
@@ -93,22 +93,22 @@
         <dependency>
             <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_common_config</artifactId>
-            <version>8.1.1-1002</version>
+            <version>${tridion.version}</version>
         </dependency>
         <dependency>
             <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_common_config_api</artifactId>
-            <version>8.1.1-1002</version>
+            <version>${tridion.version}</version>
         </dependency>
         <dependency>
             <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_common_config_legacy</artifactId>
-            <version>8.1.1-1002</version>
+            <version>${tridion.version}</version>
         </dependency>
         <dependency>
             <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_common_util</artifactId>
-            <version>8.1.1-1002</version>
+            <version>${tridion.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>

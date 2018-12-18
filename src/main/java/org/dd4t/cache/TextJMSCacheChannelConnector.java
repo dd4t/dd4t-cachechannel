@@ -6,7 +6,6 @@ import com.tridion.cache.CacheEvent;
 import com.tridion.cache.JMSCacheChannelConnector;
 import com.tridion.configuration.Configuration;
 import com.tridion.configuration.ConfigurationException;
-import org.apache.activemq.command.ActiveMQTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +24,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(TextJMSCacheChannelConnector.class);
 
+    @Override
     public void configure(Configuration configuration) throws ConfigurationException {
         LOG.info("Loading TextJMSCacheChannelConnector");
         Properties jndiContextProperties = null;
@@ -74,6 +74,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
             super(jndiProperties, factoryName, topicName, isMDBMode);
         }
 
+        @Override
         public void connect(MessageListener messageListener, ExceptionListener exceptionListener) throws JMSException, NamingException {
             Context jndiContext = this.jndiProperties != null ? new InitialContext(this.jndiProperties) : new InitialContext();
             TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory)jndiContext.lookup(this.topicConnectionFactoryName);
@@ -109,6 +110,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
             LOG.debug("Connected to queue, with topic: {} ", topic);
         }
 
+        @Override
         public void broadcastEvent(CacheEvent event) throws JMSException {
             try {
                 String serialized = CacheEventSerializer.serialize(event);
@@ -134,15 +136,14 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
 
     @Override
     protected void handleJmsMessage(Message msg) {
-        if (msg instanceof ActiveMQTextMessage) {
+        if (msg instanceof TextMessage) {
             try {
-                String msgAsString = ((ActiveMQTextMessage) msg).getText();
+                String msgAsString = ((TextMessage) msg).getText();
                 LOG.debug("processing message " + msgAsString);
 
                 CacheEvent cacheEvent;
-                CacheEventSerializer cacheEventSerializer = new CacheEventSerializer();
                 try {
-                    cacheEvent = cacheEventSerializer.deserialize(msgAsString);
+                    cacheEvent = CacheEventSerializer.deserialize(msgAsString);
                 } catch (IOException e) {
                     LOG.warn("error reading message", e);
                     return;
@@ -157,16 +158,12 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                         CacheChannelEventListener listener = (CacheChannelEventListener) listenerField.get(this);
                         listener.handleRemoteEvent(cacheEvent);
                     }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                    LOG.warn("error handling message", e);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                } catch (NoSuchFieldException | IllegalAccessException e) {
                     LOG.warn("error handling message", e);
                 }
 
-            } catch (JMSException var3) {
-                LOG.error("JMS Exception occurred during reception of event. Attempting setting up JMS connectivity again", var3);
+            } catch (JMSException jmsException) {
+                LOG.error("JMS Exception occurred during reception of event. Attempting setting up JMS connectivity again", jmsException);
                 try {
                     Field isValid = this.getClass().getSuperclass().getDeclaredField("isValid");
                     isValid.setAccessible(true);
