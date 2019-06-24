@@ -12,6 +12,7 @@ public class CacheEventSerializer {
 
     static {
         final SimpleModule module = new SimpleModule();
+        module.addSerializer(CacheEvent.class, new CacheEventCustomSerializer());
         module.addDeserializer(CacheEvent.class, new CacheEventDeserializer());
         OBJECT_MAPPER.registerModule(module);
     }
