@@ -10,6 +10,7 @@ import com.tridion.cache.CacheEvent;
 import java.io.IOException;
 
 public class CacheEventDeserializer extends StdDeserializer<CacheEvent> {
+
     public CacheEventDeserializer() {
         this(null);
     }
@@ -23,8 +24,20 @@ public class CacheEventDeserializer extends StdDeserializer<CacheEvent> {
         try {
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             String regionPath = node.get("regionPath").asText();
+
             String key = node.get("key").asText();
-            int eventType = (Integer) node.get("type").numberValue();
+
+            int eventType;
+            if (node.has("type")) {
+                eventType = (Integer) node.get("type").numberValue();
+            }
+            else if (node.has("eventType")) {
+                eventType = (Integer) node.get("eventType").numberValue();
+            }
+            else {
+                return null;
+            }
+
             return new CacheEvent(regionPath, key, eventType);
         } catch (IOException ex) {
             return null;
