@@ -7,8 +7,6 @@ import junit.framework.TestSuite;
 
 import java.io.IOException;
 
-import static org.dd4t.cache.CacheEventSerializer.*;
-
 /**
  * Unit test for simple App.
  */
@@ -45,7 +43,7 @@ public class AppTest extends TestCase {
         };
 
         for(int i = 0, l = messages.length; i < l; i++) {
-            CacheEvent cacheEvent = CacheEventSerializer.deserialize(messages[i]);
+            CacheEvent cacheEvent = CacheEventSerializerService.deserialize(messages[i]);
             assertNotNull(cacheEvent.getKey());
             assertNotNull(cacheEvent);
         }
