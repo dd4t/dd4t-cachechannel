@@ -127,7 +127,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
         @Override
         public void broadcastEvent(CacheEvent event) throws JMSException {
             try {
-                String serialized = CacheEventSerializer.serialize(event);
+                String serialized = CacheEventSerializerService.serialize(event);
                 this.publicationTextMessage.setText(serialized);
                 this.topicPublisher.publish(this.publicationTextMessage);
                 LOG.debug("Published event: {}", serialized);
@@ -157,7 +157,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
 
                 CacheEvent cacheEvent;
                 try {
-                    cacheEvent = CacheEventSerializer.deserialize(msgAsString);
+                    cacheEvent = CacheEventSerializerService.deserialize(msgAsString);
                 } catch (IOException e) {
                     LOG.warn("error reading message", e);
                     return;
