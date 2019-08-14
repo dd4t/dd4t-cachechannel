@@ -56,10 +56,85 @@
         <slf4j.version>1.6.4</slf4j.version>
         <junit.version>4.11</junit.version>
         <activemq.version>5.15.7</activemq.version>
-        <tridion.version>[8.1.1,8.5)</tridion.version>
     </properties>
 
+
+    <profiles>
+        <profile>
+            <id>sdlweb85</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_cache</artifactId>
+                    <version>[8.5.0-1069]</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_core</artifactId>
+                    <version>[8.5.0-1056]</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config</artifactId>
+                    <version>[8.5.0-1052]</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_api</artifactId>
+                    <version>[8.5.0-1052]</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_legacy</artifactId>
+                    <version>[8.5.0-1052]</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                    <version>[8.5.0-1052]</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>tridion9</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion.custom</groupId>
+                    <artifactId>udp-cache</artifactId>
+                    <version>11.0.0-1035</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion.custom</groupId>
+                    <artifactId>udp-core</artifactId>
+                    <version>11.0.0-1034</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion.custom</groupId>
+                    <artifactId>udp-common-config</artifactId>
+                    <version>11.0.0-1035</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion.custom</groupId>
+                    <artifactId>udp-common-config-api</artifactId>
+                    <version>11.0.0-1035</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion.custom</groupId>
+                    <artifactId>udp-common-config-legacy</artifactId>
+                    <version>11.0.0-1035</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion.custom</groupId>
+                    <artifactId>udp-common-util</artifactId>
+                    <version>11.0.0-1035</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+
     <build>
+        <sourceDirectory>${src.dir}</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -79,36 +154,6 @@
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
           <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.tridion.custom</groupId>
-          <artifactId>udp-cache</artifactId>
-          <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-          <groupId>com.tridion.custom</groupId>
-          <artifactId>udp-core</artifactId>
-          <version>11.0.0-1034</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config</artifactId>
-            <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config-api</artifactId>
-            <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config-legacy</artifactId>
-            <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-util</artifactId>
-            <version>11.0.0-1035</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
