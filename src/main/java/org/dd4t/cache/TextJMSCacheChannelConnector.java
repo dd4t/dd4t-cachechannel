@@ -50,16 +50,14 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
 
         LOG.debug("JMS strategy is: {} ", strategy);
 
-        boolean useActiveMQRest = Boolean.valueOf(configuration.getAttribute("UseActiveMQRest", "false"));
-        boolean useActiveMQRestAsync = Boolean.valueOf(configuration.getAttribute("ActiveMQRestAsync", "false"));
 
         JMSClient client;
         if (("AsyncJMS11".equals(strategy)) || ("AsyncJMS11MDB".equals(strategy))) {
-            client = new TextJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS11MDB".equals(strategy), useActiveMQRest, useActiveMQRestAsync);
+            client = new TextJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS11MDB".equals(strategy));
         } else if ("SyncJMS11".equals(strategy)) {
-            client = new TextSynchronousJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, useActiveMQRest, useActiveMQRestAsync);
+            client = new TextSynchronousJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName);
         } else if (("AsyncJMS10".equals(strategy)) || ("AsyncJMS10MDB".equals(strategy))) {
-            client = new TextJMS10Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS10MDB".equals(strategy), useActiveMQRest, useActiveMQRestAsync);
+            client = new TextJMS10Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS10MDB".equals(strategy));
         } else {
             throw new ConfigurationException("Unknown 'Strategy':" + strategy + " for the JMS Connector");
         }
@@ -83,19 +81,19 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
 
         protected TextMessage publicationTextMessage;
 
-        public TextJMS11Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode, boolean useActiveMQRest, boolean useActiveMQRestAsync) {
-            super(jndiProperties, factoryName, topicName, isMDBMode, useActiveMQRest, useActiveMQRestAsync);
+        public TextJMS11Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode) {
+            super(jndiProperties, factoryName, topicName, isMDBMode);
         }
 
         @Override
         public void connect(MessageListener messageListener, ExceptionListener exceptionListener) throws JMSException, NamingException {
-            Properties jndiProperties = this.getJndiProperties();
+            Properties jndiProperties = this.jndiProperties;
             Context jndiContext = jndiProperties != null ? new InitialContext(jndiProperties) : new InitialContext();
-            TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory)jndiContext.lookup(this.getTopicConnectionFactoryName());
-            Topic topic = (Topic)jndiContext.lookup(this.getTopicName());
+            TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory)jndiContext.lookup(this.topicConnectionFactoryName);
+            Topic topic = (Topic)jndiContext.lookup(this.topicName);
 
             this.topicConnection = topicConnectionFactory.createTopicConnection();
-            if (!this.isMDBMode()) {
+            if (!this.isMDBMode) {
                 try
                 {
                     this.topicConnection.setExceptionListener(exceptionListener);
@@ -106,7 +104,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
                 }
             }
             this.topicConnection.start();
-            if (!this.isMDBMode()) {
+            if (!this.isMDBMode) {
                 try
                 {
                     this.topicSubscriberSession = this.topicConnection.createTopicSession(false, 1);
@@ -138,13 +136,13 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
     }
 
     public class TextJMS10Approach extends  JMSCacheChannelConnector.JMS10Approach {
-        public TextJMS10Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode, boolean useActiveMQRest, boolean useActiveMQRestAsync) {
-            super(jndiProperties, factoryName, topicName, isMDBMode, useActiveMQRest, useActiveMQRestAsync);
+        public TextJMS10Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode) {
+            super(jndiProperties, factoryName, topicName, isMDBMode);
         }
     }
     public class TextSynchronousJMS11Approach extends  JMSCacheChannelConnector.SynchronousJMS11Approach {
-        public TextSynchronousJMS11Approach (Properties jndiProperties, String factoryName, String topicName, boolean useActiveMQRest, boolean useActiveMQRestAsync) {
-            super(jndiProperties, factoryName, topicName, useActiveMQRest, useActiveMQRestAsync);
+        public TextSynchronousJMS11Approach (Properties jndiProperties, String factoryName, String topicName) {
+            super(jndiProperties, factoryName, topicName);
         }
     }
 

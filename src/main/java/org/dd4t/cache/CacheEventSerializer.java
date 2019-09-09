@@ -22,7 +22,7 @@ public class CacheEventSerializer extends StdSerializer<CacheEvent> {
     @Override
     public void serialize(CacheEvent cacheEvent, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonGenerationException {
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeNumberField("type", cacheEvent.getEventType());
+        jsonGenerator.writeNumberField("type", cacheEvent.getType());
         jsonGenerator.writeStringField("regionPath", cacheEvent.getRegionPath());
         jsonGenerator.writeStringField("key", (String) cacheEvent.getKey());
         jsonGenerator.writeEndObject();
