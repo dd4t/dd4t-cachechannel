@@ -22,7 +22,10 @@ public class CacheEventSerializer extends StdSerializer<CacheEvent> {
     @Override
     public void serialize(CacheEvent cacheEvent, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonGenerationException {
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeNumberField("type", cacheEvent.getEventType());
+// TODO: make this work with SDL Web 8/8.5 and later versions
+// SDLWeb85:
+        jsonGenerator.writeNumberField("type", cacheEvent.getType());
+// Tridion9:        jsonGenerator.writeNumberField("type", cacheEvent.getEventType());
         jsonGenerator.writeStringField("regionPath", cacheEvent.getRegionPath());
         jsonGenerator.writeStringField("key", (String) cacheEvent.getKey());
         jsonGenerator.writeEndObject();

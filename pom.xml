@@ -5,8 +5,11 @@
 
     <groupId>org.dd4t</groupId>
     <artifactId>dd4t-cachechannel</artifactId>
-    <packaging>jar</packaging>
-    <version>1.3.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <version>1.4.0-SNAPSHOT</version>
+    <modules>
+        <module>cachechannel-sdlweb85</module>
+    </modules>
 
     <name>dd4t-cache</name>
     <description>DD4T CacheChannelConnector implementation for DD4T .NET</description>
@@ -132,9 +135,7 @@
         </profile>
     </profiles>
 
-
     <build>
-        <sourceDirectory>${src.dir}</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

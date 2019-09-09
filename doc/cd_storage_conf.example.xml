@@ -8,7 +8,7 @@
 
             <!-- JMS configuration -->
             <RemoteSynchronization Queuesize="512">
-                <Connector Class="org.dd4t.cache.TextJMSCacheChannelConnector" Topic="Tridion" Strategy="AsyncJMS11">
+                <Connector Class="org.dd4t.cache.BaseTextJMSCacheChannelConnector" Topic="Tridion" Strategy="AsyncJMS11">
                     <JndiContext>
                         <Property Name="java.naming.factory.initial" Value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
                         <Property Name="java.naming.provider.url" Value="tcp://localhost:61616?soTimeout=5000"/>
