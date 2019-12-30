@@ -1,0 +1,173 @@
+From d5cca875c6c1b2d19560ce2bafb590b986323eab Mon Sep 17 00:00:00 2001
+From: quirijnslings <quirijn.slings@trivident.com>
+Date: Mon, 9 Sep 2019 13:03:17 +0200
+Subject: [PATCH] created compatibility version 1.3.1 for sdlweb85
+
+---
+ pom.xml                                       | 40 +++++++++----------
+ .../org/dd4t/cache/CacheEventSerializer.java  |  2 +-
+ .../cache/TextJMSCacheChannelConnector.java   | 30 +++++++-------
+ 3 files changed, 35 insertions(+), 37 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index dde0f4d..585627f 100755
+--- a/pom.xml
++++ b/pom.xml
+@@ -4,9 +4,9 @@
+     <modelVersion>4.0.0</modelVersion>
+ 
+     <groupId>org.dd4t</groupId>
+-    <artifactId>dd4t-cachechannel</artifactId>
++    <artifactId>dd4t-cachechannel-sdlweb85</artifactId>
+     <packaging>jar</packaging>
+-    <version>1.3.1-SNAPSHOT</version>
++    <version>1.3.1</version>
+ 
+     <name>dd4t-cache</name>
+     <description>DD4T CacheChannelConnector implementation for DD4T .NET</description>
+@@ -81,34 +81,34 @@
+           <version>${jackson.version}</version>
+         </dependency>
+         <dependency>
+-          <groupId>com.tridion.custom</groupId>
+-          <artifactId>udp-cache</artifactId>
+-          <version>11.0.0-1035</version>
++            <groupId>com.tridion</groupId>
++            <artifactId>cd_cache</artifactId>
++            <version>[8.5.0-1069]</version>
+         </dependency>
+         <dependency>
+-          <groupId>com.tridion.custom</groupId>
+-          <artifactId>udp-core</artifactId>
+-          <version>11.0.0-1034</version>
++            <groupId>com.tridion</groupId>
++            <artifactId>cd_core</artifactId>
++            <version>[8.5.0-1056]</version>
+         </dependency>
+         <dependency>
+-            <groupId>com.tridion.custom</groupId>
+-            <artifactId>udp-common-config</artifactId>
+-            <version>11.0.0-1035</version>
++            <groupId>com.tridion</groupId>
++            <artifactId>cd_common_config</artifactId>
++            <version>[8.5.0-1052]</version>
+         </dependency>
+         <dependency>
+-            <groupId>com.tridion.custom</groupId>
+-            <artifactId>udp-common-config-api</artifactId>
+-            <version>11.0.0-1035</version>
++            <groupId>com.tridion</groupId>
++            <artifactId>cd_common_config_api</artifactId>
++            <version>[8.5.0-1052]</version>
+         </dependency>
+         <dependency>
+-            <groupId>com.tridion.custom</groupId>
+-            <artifactId>udp-common-config-legacy</artifactId>
+-            <version>11.0.0-1035</version>
++            <groupId>com.tridion</groupId>
++            <artifactId>cd_common_config_legacy</artifactId>
++            <version>[8.5.0-1052]</version>
+         </dependency>
+         <dependency>
+-            <groupId>com.tridion.custom</groupId>
+-            <artifactId>udp-common-util</artifactId>
+-            <version>11.0.0-1035</version>
++            <groupId>com.tridion</groupId>
++            <artifactId>cd_common_util</artifactId>
++            <version>[8.5.0-1052]</version>
+         </dependency>
+         <dependency>
+             <groupId>org.apache.activemq</groupId>
+diff --git a/src/main/java/org/dd4t/cache/CacheEventSerializer.java b/src/main/java/org/dd4t/cache/CacheEventSerializer.java
+index 9c95ff7..e36f34a 100644
+--- a/src/main/java/org/dd4t/cache/CacheEventSerializer.java
++++ b/src/main/java/org/dd4t/cache/CacheEventSerializer.java
+@@ -22,7 +22,7 @@ public class CacheEventSerializer extends StdSerializer<CacheEvent> {
+     @Override
+     public void serialize(CacheEvent cacheEvent, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonGenerationException {
+         jsonGenerator.writeStartObject();
+-        jsonGenerator.writeNumberField("type", cacheEvent.getEventType());
++        jsonGenerator.writeNumberField("type", cacheEvent.getType());
+         jsonGenerator.writeStringField("regionPath", cacheEvent.getRegionPath());
+         jsonGenerator.writeStringField("key", (String) cacheEvent.getKey());
+         jsonGenerator.writeEndObject();
+diff --git a/src/main/java/org/dd4t/cache/TextJMSCacheChannelConnector.java b/src/main/java/org/dd4t/cache/TextJMSCacheChannelConnector.java
+index aa789ce..ab3bdb7 100755
+--- a/src/main/java/org/dd4t/cache/TextJMSCacheChannelConnector.java
++++ b/src/main/java/org/dd4t/cache/TextJMSCacheChannelConnector.java
+@@ -50,16 +50,14 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
+ 
+         LOG.debug("JMS strategy is: {} ", strategy);
+ 
+-        boolean useActiveMQRest = Boolean.valueOf(configuration.getAttribute("UseActiveMQRest", "false"));
+-        boolean useActiveMQRestAsync = Boolean.valueOf(configuration.getAttribute("ActiveMQRestAsync", "false"));
+ 
+         JMSClient client;
+         if (("AsyncJMS11".equals(strategy)) || ("AsyncJMS11MDB".equals(strategy))) {
+-            client = new TextJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS11MDB".equals(strategy), useActiveMQRest, useActiveMQRestAsync);
++            client = new TextJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS11MDB".equals(strategy));
+         } else if ("SyncJMS11".equals(strategy)) {
+-            client = new TextSynchronousJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName, useActiveMQRest, useActiveMQRestAsync);
++            client = new TextSynchronousJMS11Approach(jndiContextProperties, topicConnectionFactoryName, topicName);
+         } else if (("AsyncJMS10".equals(strategy)) || ("AsyncJMS10MDB".equals(strategy))) {
+-            client = new TextJMS10Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS10MDB".equals(strategy), useActiveMQRest, useActiveMQRestAsync);
++            client = new TextJMS10Approach(jndiContextProperties, topicConnectionFactoryName, topicName, "AsyncJMS10MDB".equals(strategy));
+         } else {
+             throw new ConfigurationException("Unknown 'Strategy':" + strategy + " for the JMS Connector");
+         }
+@@ -83,19 +81,19 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
+ 
+         protected TextMessage publicationTextMessage;
+ 
+-        public TextJMS11Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode, boolean useActiveMQRest, boolean useActiveMQRestAsync) {
+-            super(jndiProperties, factoryName, topicName, isMDBMode, useActiveMQRest, useActiveMQRestAsync);
++        public TextJMS11Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode) {
++            super(jndiProperties, factoryName, topicName, isMDBMode);
+         }
+ 
+         @Override
+         public void connect(MessageListener messageListener, ExceptionListener exceptionListener) throws JMSException, NamingException {
+-            Properties jndiProperties = this.getJndiProperties();
++            Properties jndiProperties = this.jndiProperties;
+             Context jndiContext = jndiProperties != null ? new InitialContext(jndiProperties) : new InitialContext();
+-            TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory)jndiContext.lookup(this.getTopicConnectionFactoryName());
+-            Topic topic = (Topic)jndiContext.lookup(this.getTopicName());
++            TopicConnectionFactory topicConnectionFactory = (TopicConnectionFactory)jndiContext.lookup(this.topicConnectionFactoryName);
++            Topic topic = (Topic)jndiContext.lookup(this.topicName);
+ 
+             this.topicConnection = topicConnectionFactory.createTopicConnection();
+-            if (!this.isMDBMode()) {
++            if (!this.isMDBMode) {
+                 try
+                 {
+                     this.topicConnection.setExceptionListener(exceptionListener);
+@@ -106,7 +104,7 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
+                 }
+             }
+             this.topicConnection.start();
+-            if (!this.isMDBMode()) {
++            if (!this.isMDBMode) {
+                 try
+                 {
+                     this.topicSubscriberSession = this.topicConnection.createTopicSession(false, 1);
+@@ -138,13 +136,13 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
+     }
+ 
+     public class TextJMS10Approach extends  JMSCacheChannelConnector.JMS10Approach {
+-        public TextJMS10Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode, boolean useActiveMQRest, boolean useActiveMQRestAsync) {
+-            super(jndiProperties, factoryName, topicName, isMDBMode, useActiveMQRest, useActiveMQRestAsync);
++        public TextJMS10Approach(Properties jndiProperties, String factoryName, String topicName, boolean isMDBMode) {
++            super(jndiProperties, factoryName, topicName, isMDBMode);
+         }
+     }
+     public class TextSynchronousJMS11Approach extends  JMSCacheChannelConnector.SynchronousJMS11Approach {
+-        public TextSynchronousJMS11Approach (Properties jndiProperties, String factoryName, String topicName, boolean useActiveMQRest, boolean useActiveMQRestAsync) {
+-            super(jndiProperties, factoryName, topicName, useActiveMQRest, useActiveMQRestAsync);
++        public TextSynchronousJMS11Approach (Properties jndiProperties, String factoryName, String topicName) {
++            super(jndiProperties, factoryName, topicName);
+         }
+     }
+ 
+-- 
+2.18.0.windows.1
+
