@@ -1,5 +1,6 @@
 package org.dd4t.cache;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tridion.cache.CacheEvent;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -47,5 +48,10 @@ public class AppTest extends TestCase {
             assertNotNull(cacheEvent.getKey());
             assertNotNull(cacheEvent);
         }
+    }
+    public void testSerialize() throws JsonProcessingException {
+        CacheEvent cacheEvent = new CacheEvent("regionpathX", "my:key", 1);
+        String json = CacheEventSerializerService.serialize(cacheEvent);
+        assertTrue(json.contains("regionpathX"));
     }
 }

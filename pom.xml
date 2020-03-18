@@ -81,34 +81,34 @@
           <version>${jackson.version}</version>
         </dependency>
         <dependency>
-          <groupId>com.tridion.custom</groupId>
-          <artifactId>udp-cache</artifactId>
-          <version>11.0.0-1035</version>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_cache</artifactId>
+            <version>[8.1.1-1006]</version>
         </dependency>
         <dependency>
-          <groupId>com.tridion.custom</groupId>
-          <artifactId>udp-core</artifactId>
-          <version>11.0.0-1034</version>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_core</artifactId>
+            <version>[8.1.1-1006]</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config</artifactId>
-            <version>11.0.0-1035</version>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_common_config</artifactId>
+            <version>[8.1.1-1003]</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config-api</artifactId>
-            <version>11.0.0-1035</version>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_common_config_api</artifactId>
+            <version>[8.1.1-1003]</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config-legacy</artifactId>
-            <version>11.0.0-1035</version>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_common_config_legacy</artifactId>
+            <version>[8.1.1-1003]</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-util</artifactId>
-            <version>11.0.0-1035</version>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_common_util</artifactId>
+            <version>[8.1.1-1003]</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
