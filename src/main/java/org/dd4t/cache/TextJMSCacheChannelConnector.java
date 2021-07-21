@@ -127,8 +127,10 @@ public class TextJMSCacheChannelConnector extends JMSCacheChannelConnector {
         @Override
         public void broadcastEvent(CacheEvent event) throws JMSException {
             try {
+                LOG.debug("About to publish event with key: {}", event.getKey());
                 String serialized = CacheEventSerializer.serialize(event);
                 this.publicationTextMessage.setText(serialized);
+                LOG.debug("Serialized event: {}", serialized);
                 this.topicPublisher.publish(this.publicationTextMessage);
                 LOG.debug("Published event: {}", serialized);
             } catch (JsonProcessingException e) {

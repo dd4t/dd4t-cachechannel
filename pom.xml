@@ -6,7 +6,7 @@
     <groupId>org.dd4t</groupId>
     <artifactId>dd4t-cachechannel</artifactId>
     <packaging>jar</packaging>
-    <version>1.3-SNAPSHOT</version>
+    <version>2.5-SNAPSHOT</version>
 
     <name>dd4t-cache</name>
     <description>DD4T CacheChannelConnector implementation for DD4T .NET</description>
@@ -56,7 +56,8 @@
         <slf4j.version>1.6.4</slf4j.version>
         <junit.version>4.11</junit.version>
         <activemq.version>5.15.7</activemq.version>
-        <tridion.version>[8.1.1,8.5)</tridion.version>
+        <tridion.version>[11.5.0,11.5.1)</tridion.version>
+        <spring.version>5.1.20.RELEASE</spring.version>
     </properties>
 
     <build>
@@ -76,39 +77,14 @@
 
     <dependencies>
         <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-          <version>${jackson.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
-          <groupId>com.tridion.custom</groupId>
-          <artifactId>udp-cache</artifactId>
-          <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-          <groupId>com.tridion.custom</groupId>
-          <artifactId>udp-core</artifactId>
-          <version>11.0.0-1034</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config</artifactId>
-            <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config-api</artifactId>
-            <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-config-legacy</artifactId>
-            <version>11.0.0-1035</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.custom</groupId>
-            <artifactId>udp-common-util</artifactId>
-            <version>11.0.0-1035</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -116,17 +92,153 @@
             <version>${activemq.version}</version>
         </dependency>
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>${slf4j.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
         </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-core</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-data-model-compatible</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-cache</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-common-util</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-datalayer</artifactId>
+            <version>${tridion.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.oracle.jdbc</groupId>
+                    <artifactId>oraclepki</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.oracle.jdbc</groupId>
+                    <artifactId>ojdbc8</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.oracle.jdbc</groupId>
+                    <artifactId>osdt_cert</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.oracle.jdbc</groupId>
+                    <artifactId>osdt_core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-common-config-legacy</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-common-config</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-common-config-api</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-storage-api</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
+        </dependency>
+
+        <!-- the rest of the dependencies is needed to run the tests only, not for compilation-->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>3.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.0.0-RC1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.5.1</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- for unit tests -->
         <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>${junit.version}</version>
-          <scope>test</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
